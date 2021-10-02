@@ -3,20 +3,20 @@ from bs4 import BeautifulSoup
 import lxml
 
 from config import (
-	FLIPKART_HEADERS,
+    FLIPKART_HEADERS,
 )
 
 
 def get_flipkart_data(url):
 
-	response = requests.get(url, headers={
-		"User-Agent": FLIPKART_HEADERS
-	})
+    response = requests.get(url, headers={
+        "User-Agent": FLIPKART_HEADERS
+    })
 
-	soup = BeautifulSoup(response.text, "lxml")
+    soup = BeautifulSoup(response.text, "lxml")
 
-	item_site = url.split(".")[1].upper()
+    item_site = url.split(".")[1].upper()
 
-	return {
-		"url": url
-	}
+    return {
+        "url": url
+    }
