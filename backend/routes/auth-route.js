@@ -1,5 +1,7 @@
 const { authController } = require("../controllers");
-const { auth } = require("../validations");
+const { authValidation } = require("../validations");
+
+const tags = ['api', 'auth'];
 
 module.exports = {
   name: "auth",
@@ -11,11 +13,11 @@ module.exports = {
         path: "/auth/login",
         config: {
           auth: false,
-          tags: ['api'],
+          tags,
           description: "User login route",
           handler: authController.userLogin,
           validate: {
-            payload: auth.loginValidation,
+            payload: authValidation.userLoginValidation,
           },
         }
       },
@@ -24,11 +26,11 @@ module.exports = {
         path: "/auth/register",
         config: {
           auth: false,
-          tags: ['api'],
+          tags,
           description: "User register route",
           handler: authController.userRegister,
           validate: {
-            payload: auth.registerValidation,
+            payload: authValidation.userRegisterValidation,
           }
         }
       },
@@ -37,11 +39,11 @@ module.exports = {
         path: "/auth/verify",
         config: {
           auth: false,
-          tags: ['api'],
+          tags,
           description: "User verify route",
           handler: authController.verifyUser,
           validate: {
-            payload: auth.verifyValidation,
+            payload: authValidation.verifyUserValidation,
           }
         }
       },
@@ -50,11 +52,11 @@ module.exports = {
         path: "/auth/resend",
         config: {
           auth: false,
-          tags: ['api'],
+          tags,
           description: "User resend code route",
           handler: authController.resendCode,
           validate: {
-            payload: auth.resendValidation,
+            payload: authValidation.resendCodeValidation,
           }
         }
       }

@@ -14,7 +14,12 @@
     "@hapi/inert": "^6.0.4",
     "@hapi/vision": "^6.1.0",
     "bcryptjs": "^2.4.3",
+    "dotenv": "^10.0.0",
     "hapi-swagger": "^14.2.4",
-    "jsonwebtoken": "^8.5.1"
+    "joi": "^17.4.2",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.3.0",
+    "nodemailer": "^6.6.5",
+    "sequelize": "^6.6.5"
   }
 }

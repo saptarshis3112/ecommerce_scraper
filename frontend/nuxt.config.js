@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 import colors from 'vuetify/es5/util/colors'
 
 export default {
@@ -35,9 +37,7 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
   ],
 
@@ -68,6 +68,11 @@ export default {
         }
       }
     }
+  },
+
+  server: {
+    port: process.env.PORT,
+    host: process.env.HOST,
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

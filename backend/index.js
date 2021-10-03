@@ -4,13 +4,15 @@ const Inert = require("@hapi/inert");
 const Vision = require("@hapi/vision");
 const HapiSwagger = require("hapi-swagger");
 
-const { environment } = require("./config");
+const { constants: { Environment: { PORT, HOST } } } = require("./config");
+
+const { authMiddleware, routeLogger } = require("./middlewares");
 
 const routes = require("./routes");
 
 const server = new Server({
-  port: environment.PORT,
-  host: environment.HOST,
+  port: PORT,
+  host: HOST,
 })
 
 const App = async () => {
@@ -20,6 +22,12 @@ const App = async () => {
       title: 'Ecommerce Scraper API Documentation',
       version: '1.0.0.0',
     },
+    grouping: 'tags',
+    basePath: '/api/',
+    documentationPath: '/api/documentation',
+    jsonPath: '/api/swagger.json',
+    swaggerUIPath: '/api/swagger/ui',
+    schemes: ['https', 'http'],
   };
 
   await server.register([
@@ -31,10 +39,21 @@ const App = async () => {
     }
   ]);
 
+  // Middleware to log requested routes.
+  server.ext('onRequest', routeLogger);
 
-  await server.register(routes);
+  // Auth middleware
+  server.auth.scheme("custom", authMiddleware);
+  server.auth.strategy("default", "custom");
+  server.auth.default("default");
 
-  console.log(`Server on port ${environment.PORT}`);
+  await server.register(routes, {
+    routes: {
+      prefix: '/api'
+    }
+  });
+
+  console.log(`Server on port ${PORT}`);
   await server.start();
 
 };
