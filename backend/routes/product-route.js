@@ -48,6 +48,19 @@ module.exports = {
             params: productValidation.deleteUserProductValidation,
           }
         }
+      },
+      {
+        method: "GET",
+        path: "/ecommerce/list",
+        config: {
+          auth: "default",
+          tags,
+          description: "Get Ecommerce list",
+          handler: productController.getEcommerceList,
+          validate: {
+            headers: headerValidation,
+          }
+        }
       }
     ];
 

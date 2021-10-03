@@ -1,4 +1,4 @@
-const { Product, UserProductAssociation, User } = require("../models");
+const { Product, UserProductAssociation, User, EcommerceSite } = require("../models");
 const { responseHelper } = require("../helpers");
 
 const { default: axios } = require("axios");
@@ -43,7 +43,7 @@ const addNewProduct = async (req, h) => {
       if (userProductExists) {
         return responseHelper.error(h, "USERPRODUCTEXISTS400");
       }
-      
+
     }
 
     if (!productExists) {
@@ -123,7 +123,7 @@ const getUserProducts = async (req, h) => {
     });
 
     const productList = await Product.findAll({
-      where:{ 
+      where: {
         id: userProducts.map(product => product.product_id),
       },
       raw: true,
@@ -157,41 +157,69 @@ const getUserProducts = async (req, h) => {
  */
 const deleteUserProduct = async (req, h) => {
 
-  const { params: { user_product_id }, user } = req;
+  try {
+    const { params: { user_product_id }, user } = req;
 
-  const userProductExists = await UserProductAssociation.findOne({
-    where: {
-      id: user_product_id,
-    },
-    raw: true,
-    attributes: ['id'],
-  });
+    const userProductExists = await UserProductAssociation.findOne({
+      where: {
+        id: user_product_id,
+      },
+      raw: true,
+      attributes: ['id'],
+    });
 
-  if (!userProductExists) {
-    return responseHelper.error(h, "USERPRODUCT404");
+    if (!userProductExists) {
+      return responseHelper.error(h, "USERPRODUCT404");
+    }
+
+    const deleteProduct = UserProductAssociation.destroy({
+      where: {
+        id: user_product_id,
+      }
+    });
+
+    const updateCount = User.update({
+      product_count: user.product_count - 1,
+    }, {
+      where: {
+        id: user.id,
+      }
+    });
+
+    await Promise.all([deleteProduct, updateCount]);
+    return responseHelper.success(h, "USERPRODUCTDELETED204");
+
+  } catch (ex) {
+    return responseHelper.error(h, "SERVER500", ex);
   }
 
-  const deleteProduct = UserProductAssociation.destroy({
-    where: {
-      id: user_product_id,
-    }
-  });
+}
 
-  const updateCount = User.update({
-    product_count: user.product_count-1,
-  }, {
-    where: {
-      id: user.id,
-    }
-  });
+const getEcommerceList = async (req, h) => {
+  try {
 
-  await Promise.all([deleteProduct, updateCount]);
-  return responseHelper.success(h, "USERPRODUCTDELETED204");
+    const ecommerceList = await EcommerceSite.findAll({
+      where: {
+        is_active: true,
+      },
+      attributes: {
+        exclude: ['createdAt', 'deletedAt', 'updatedAt'],
+      },
+      raw: true,
+    });
 
+    return responseHelper.success(h, "SITELIST200", {
+      "ecommerce": ecommerceList,
+    })
+
+  } catch (ex) {
+    return responseHelper.error(h, "SERVER500", ex);
+  }
 }
 
 module.exports = {
   addNewProduct,
   getUserProducts,
   deleteUserProduct,
+  getEcommerceList,
 };

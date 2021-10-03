@@ -22,6 +22,12 @@ module.exports = {
     "message": "User product does not exists",
     "success": false,
     "status_code": 404,
+  },
+
+  "SITELIST200": {
+    "message": "Ecommerce site fetched successfully",
+    "status_code": 200,
+    "success": true,
   }
 
 };
